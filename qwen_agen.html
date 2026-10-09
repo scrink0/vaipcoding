@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>freePythonCamp — Learn Python, Earn Certifications</title>
+<meta name="description" content="A free, interactive Python curriculum. Write and run real Python in your browser." />
+<style>
+  :root {
+    --primary: #0a0a23;
+    --secondary: #1b1b32;
+    --tertiary: #2a2a40;
+    --quaternary: #3b3b4f;
+    --primary-dark: #000015;
+    --gold: #f1be32;
+    --gold-hover: #feac32;
+    --blue: #99c9ff;
+    --green: #acd157;
+    --green-dark: #8cc149;
+    --red: #ff8080;
+    --red-dark: #ff5b5b;
+    --gray05: #d0d0d5;
+    --gray45: #858591;
+    --gray75: #3b3b4f;
+    --white: #ffffff;
+    --mono: "Liberation Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--primary);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--primary-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--quaternary); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gray45); }
+
+  /* ---------- Topnav ---------- */
+  .topnav {
+    background: var(--primary);
+    border-bottom: 1px solid var(--tertiary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 56px;
+    display: flex;
+    align-items: center;
+  }
+  .topnav-inner {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .menu-btn {
+    display: none;
+    font-size: 24px;
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .menu-btn:hover { background: var(--tertiary); }
+  .logo {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .logo .flame { color: var(--gold); }
+  .logo .org { color: var(--gray05); font-weight: 400; }
+  .nav-links { display: flex; gap: 6px; margin-left: 8px; }
+  .nav-links a {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--gray05);
+  }
+  .nav-links a:hover { background: var(--tertiary); color: var(--white); }
+  .nav-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .btn-donate {
+    background: var(--white);
+    color: var(--primary);
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .btn-donate:hover { background: var(--gold-hover); }
+  .btn-signin {
+    border: 1px solid var(--white);
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--white);
+  }
+  .btn-signin:hover { background: var(--white); color: var(--primary); }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    width: 100%;
+    min-height: 0;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    background: var(--secondary);
+    border-right: 1px solid var(--tertiary);
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+    position: sticky;
+    top: 56px;
+  }
+  .sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--tertiary);
+    position: sticky;
+    top: 0;
+    background: var(--secondary);
+    z-index: 2;
+  }
+  .sidebar-header h2 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray05); }
+  .progress-track { height: 8px; background: var(--tertiary); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width .3s; }
+  .progress-text { display: block; margin-top: 8px; font-size: 12px; color: var(--gray05); }
+
+  .curriculum { padding: 8px 0; }
+  .module { border-bottom: 1px solid var(--tertiary); }
+  .module-header {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .module-header:hover { background: var(--tertiary); }
+  .module-header .chevron { transition: transform .2s; color: var(--gray05); font-size: 12px; }
+  .module.open .chevron { transform: rotate(180deg); }
+  .lessons { list-style: none; margin: 0; padding: 0; max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+  .module.open .lessons { max-height: 1200px; }
+  .lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px 9px 28px;
+    font-size: 13px;
+    color: var(--gray05);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .lesson-item:hover { background: var(--tertiary); color: var(--white); }
+  .lesson-item.active { background: var(--tertiary); color: var(--white); border-left-color: var(--gold); }
+  .lesson-item.done .lesson-check { background: var(--green); color: var(--primary); }
+  .lesson-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gray45);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .lesson-name { line-height: 1.3; }
+
+  /* ---------- Content ---------- */
+  .content {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    min-width: 0;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Description panel */
+  .description-panel {
+    background: var(--primary);
+    padding: 24px 28px;
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+    border-right: 1px solid var(--tertiary);
+  }
+  .crumb { font-size: 12px; color: var(--gold); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px; }
+  .lesson-title { font-size: 26px; font-weight: 700; margin: 0 0 18px; line-height: 1.2; }
+  .lesson-desc { font-size: 15px; color: var(--gray05); margin-bottom: 18px; }
+  .panel-h { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin: 22px 0 8px; font-weight: 700; }
+  .example-code {
+    background: var(--secondary);
+    border: 1px solid var(--tertiary);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--green);
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0 0 10px;
+  }
+  .instructions { margin: 0; padding-left: 20px; }
+  .instructions li { font-size: 14px; color: var(--gray05); margin-bottom: 8px; }
+  .instructions code { background: var(--secondary); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 12px; color: var(--gold); }
+  .desc-nav { display: flex; gap: 10px; margin-top: 28px; }
+  .desc-nav button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    border: 1px solid var(--gray45);
+    color: var(--white);
+  }
+  .desc-nav button:hover:not(:disabled) { background: var(--tertiary); }
+  .desc-nav button:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Editor panel */
+  .editor-panel {
+    background: var(--secondary);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .editor-tabs {
+    background: var(--primary-dark);
+    border-bottom: 1px solid var(--tertiary);
+    padding: 0 12px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gray05);
+  }
+  .editor-tabs span { padding: 4px 12px; background: var(--secondary); color: var(--blue); border-radius: 4px 4px 0 0; }
+  .editor-wrap {
+    display: flex;
+    background: var(--primary-dark);
+    flex: 1;
+    min-height: 280px;
+  }
+  .line-numbers {
+    padding: 12px 8px 12px 12px;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--gray45);
+    user-select: none;
+    overflow: hidden;
+    min-width: 42px;
+  }
+  #editor {
+    flex: 1;
+    width: 100%;
+    background: var(--primary-dark);
+    color: var(--gray05);
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 12px 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 20px;
+    tab-size: 4;
+    white-space: pre;
+    overflow: auto;
+  }
+  .editor-actions {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    background: var(--secondary);
+    border-top: 1px solid var(--tertiary);
+    flex-wrap: wrap;
+  }
+  .btn-run, .btn-check, .btn-reset, .btn-next {
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-run { background: var(--tertiary); color: var(--white); border: 1px solid var(--quaternary); }
+  .btn-run:hover { background: var(--quaternary); }
+  .btn-check { background: var(--gold); color: var(--primary); }
+  .btn-check:hover { background: var(--gold-hover); }
+  .btn-check:disabled { opacity: .5; cursor: wait; }
+  .btn-reset { background: transparent; color: var(--gray05); border: 1px solid var(--gray45); margin-left: auto; }
+  .btn-reset:hover { background: var(--tertiary); }
+  .btn-next { background: var(--green); color: var(--primary); display: none; }
+  .btn-next.show { display: inline-flex; }
+
+  .console, .tests {
+    background: var(--primary-dark);
+    border-top: 1px solid var(--tertiary);
+  }
+  .console-header, .tests-header {
+    padding: 8px 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray05);
+    border-bottom: 1px solid var(--tertiary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .console-output {
+    margin: 0;
+    padding: 12px 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--green);
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 60px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .console-output.error { color: var(--red); }
+  .console-output.muted { color: var(--gray45); }
+  #testsList { list-style: none; margin: 0; padding: 8px 0; max-height: 260px; overflow-y: auto; }
+  #testsList li {
+    padding: 7px 14px;
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: var(--gray05);
+  }
+  .test-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .test-icon.pass { background: var(--green); color: var(--primary); }
+  .test-icon.fail { background: var(--red); color: var(--primary); }
+  .test-icon.idle { background: transparent; border: 1.5px solid var(--gray45); }
+
+  /* Footer */
+  .footer {
+    background: var(--primary-dark);
+    border-top: 1px solid var(--tertiary);
+    padding: 18px 24px;
+    margin-top: auto;
+    text-align: center;
+    color: var(--gray45);
+    font-size: 13px;
+  }
+  .footer a { color: var(--blue); }
+  .footer .footer-links { margin-bottom: 8px; }
+  .footer .footer-links a { margin: 0 8px; }
+
+  /* Overlay / modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,20,.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .loader-box {
+    text-align: center;
+    max-width: 360px;
+  }
+  .py-logo { font-size: 56px; margin-bottom: 14px; }
+  .spinner {
+    width: 44px; height: 44px;
+    border: 4px solid var(--tertiary);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { color: var(--gray05); font-size: 15px; }
+  .loader-sub { color: var(--gray45); font-size: 13px; margin-top: 6px; }
+
+  .modal {
+    background: var(--secondary);
+    border: 1px solid var(--tertiary);
+    border-radius: 8px;
+    max-width: 460px;
+    width: 100%;
+    padding: 28px;
+    text-align: center;
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 22px; color: var(--green); }
+  .modal p { color: var(--gray05); margin: 0 0 20px; font-size: 14px; }
+  .modal .btn-check { width: 100%; justify-content: center; }
+
+  .badge-done {
+    display: inline-block;
+    background: var(--green);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    text-transform: uppercase;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .content { grid-template-columns: 1fr; }
+    .description-panel { max-height: none; border-right: none; border-bottom: 1px solid var(--tertiary); }
+  }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      position: fixed;
+      left: -300px;
+      top: 56px;
+      bottom: 0;
+      width: 290px;
+      max-height: none;
+      height: calc(100vh - 56px);
+      z-index: 90;
+      transition: left .25s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,.4);
+    }
+    .sidebar.open { left: 0; }
+    .menu-btn { display: inline-flex; }
+    .nav-links { display: none; }
+    .btn-donate { display: none; }
+    .description-panel { padding: 18px 16px; }
+    .lesson-title { font-size: 22px; }
+  }
+  .backdrop {
+    display: none;
+    position: fixed;
+    inset: 56px 0 0 0;
+    background: rgba(0,0,0,.5);
+    z-index: 80;
+  }
+  .backdrop.show { display: block; }
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">&#9776;</button>
+    <a class="logo" href="#"><span class="flame">&#128013;</span> freePythonCamp<span class="org">.org</span></a>
+    <nav class="nav-links">
+      <a href="#">Learn</a>
+      <a href="#">Docs</a>
+      <a href="#">Forum</a>
+      <a href="#">News</a>
+      <a href="#">Podcast</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn-donate">Donate</button>
+      <button class="btn-signin">Sign in</button>
+    </div>
+  </div>
+</header>
+
+<div class="backdrop" id="backdrop"></div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Curriculum</h2>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-text" id="progressText">0 of 0 lessons</span>
+    </div>
+    <nav class="curriculum" id="curriculum"></nav>
+  </aside>
+
+  <main class="content">
+    <section class="description-panel" id="descriptionPanel"></section>
+    <section class="editor-panel">
+      <div class="editor-tabs"><span>main.py</span></div>
+      <div class="editor-wrap">
+        <div class="line-numbers" id="lineNumbers">1</div>
+        <textarea id="editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+      </div>
+      <div class="editor-actions">
+        <button class="btn-run" id="runBtn">&#9654; Run</button>
+        <button class="btn-check" id="checkBtn">&#10003; Check</button>
+        <button class="btn-next" id="nextBtn">Next &#8594;</button>
+        <button class="btn-reset" id="resetBtn">Reset</button>
+      </div>
+      <div class="console">
+        <div class="console-header"><span>Console</span><span style="text-transform:none;letter-spacing:0;color:var(--gray45)">Ctrl+Enter to run</span></div>
+        <pre class="console-output muted" id="consoleOutput">Run your code to see output here.</pre>
+      </div>
+      <div class="tests">
+        <div class="tests-header"><span>Tests</span><span id="testSummary" style="text-transform:none;letter-spacing:0;color:var(--gray45)"></span></div>
+        <ul id="testsList"></ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="#">About</a><a href="#">Alumni Network</a><a href="#">Open Source</a><a href="#">Shop</a><a href="#">Support</a>
+  </div>
+  <p>freePythonCamp &copy; 2025 &mdash; A free, open-source Python curriculum. Run real Python in your browser with Pyodide.</p>
+</footer>
+
+<!-- Loading overlay -->
+<div class="overlay show" id="loader">
+  <div class="loader-box">
+    <div class="py-logo">&#128013;</div>
+    <div class="spinner"></div>
+    <div class="loader-text">Loading the Python runtime&hellip;</div>
+    <div class="loader-sub">Downloading Pyodide (WebAssembly). This happens once per visit.</div>
+  </div>
+</div>
+
+<!-- Success modal -->
+<div class="overlay" id="successModal">
+  <div class="modal">
+    <h3>&#127881; Lesson Complete!</h3>
+    <p id="successText">Great work! You passed all the tests.</p>
+    <button class="btn-check" id="modalNext">Continue to next lesson &#8594;</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script>
+/* =========================================================
+   CURRICULUM DATA — a complete Python course
+   ========================================================= */
+const curriculum = [
+  {
+    title: "Basic Python",
+    lessons: [
+      {
+        title: "Comments",
+        desc: "Comments are notes in your code that Python ignores when it runs. They start with the # symbol and help explain your code to other humans (and your future self).",
+        example: "# This is a comment\nprint('Hello')  # comments can go here too",
+        instructions: ["Create a variable named <code>dog_name</code> and assign it the string <code>'Buddy'</code>.", "Add a comment above it that says <code># Buddy is a good dog</code>."],
+        starter: "# Buddy is a good dog\ndog_name = 'Buddy'",
+        tests: [
+          { d: "You should have a variable named <code>dog_name</code>.", t: "dog_name == 'Buddy'" }
+        ]
+      },
+      {
+        title: "The print() Function",
+        desc: "The print() function displays output to the console. It is the most common way to see what your program is doing.",
+        example: "print('Hello, World!')\nprint(1 + 2)",
+        instructions: ["Use the <code>print()</code> function to display the text <code>Hello, World!</code>."],
+        starter: "",
+        tests: [
+          { d: "Your program should print <code>Hello, World!</code>.", t: "'Hello, World!' in __out__" }
+        ]
+      },
+      {
+        title: "Variables",
+        desc: "A variable is a name that stores a value. You create one with the assignment operator =. The name goes on the left, the value on the right.",
+        example: "age = 25\nname = 'Alice'\nprint(name, 'is', age)",
+        instructions: ["Create a variable named <code>age</code> with the integer value <code>25</code>.", "Create a variable named <code>name</code> with the string value <code>'Alice'</code>."],
+        starter: "",
+        tests: [
+          { d: "<code>age</code> should equal <code>25</code>.", t: "age == 25" },
+          { d: "<code>name</code> should equal <code>'Alice'</code>.", t: "name == 'Alice'" }
+        ]
+      },
+      {
+        title: "Data Types",
+        desc: "Every value in Python has a type. The four basic types are int (whole numbers), float (decimal numbers), str (text), and bool (True/False).",
+        example: "i = 10        # int\nf = 3.14      # float\ns = 'hello'   # str\nb = True      # bool",
+        instructions: ["Create <code>integer_var</code> = <code>10</code> (an int).", "Create <code>float_var</code> = <code>3.14</code> (a float).", "Create <code>string_var</code> = <code>'hello'</code> (a str).", "Create <code>bool_var</code> = <code>True</code> (a bool)."],
+        starter: "",
+        tests: [
+          { d: "<code>integer_var</code> should be an int equal to 10.", t: "isinstance(integer_var, int) and integer_var == 10" },
+          { d: "<code>float_var</code> should be a float.", t: "isinstance(float_var, float)" },
+          { d: "<code>string_var</code> should equal 'hello'.", t: "isinstance(string_var, str) and string_var == 'hello'" },
+          { d: "<code>bool_var</code> should be a bool equal to True.", t: "isinstance(bool_var, bool) and bool_var == True" }
+        ]
+      },
+      {
+        title: "Arithmetic Operators",
+        desc: "Python can do math. The operators are + (add), - (subtract), * (multiply), / (divide), // (floor divide), % (modulo/remainder), and ** (power).",
+        example: "5 + 2    # 7\n5 - 2    # 3\n5 * 2    # 10\n5 / 2    # 2.5\n5 // 2   # 2\n5 % 2    # 1\n5 ** 2   # 25",
+        instructions: ["Create <code>sum_result</code> = 7 + 3.", "Create <code>product</code> = 4 * 5.", "Create <code>power</code> = 2 ** 3.", "Create <code>remainder</code> = 10 % 3."],
+        starter: "",
+        tests: [
+          { d: "<code>sum_result</code> should equal 10.", t: "sum_result == 10" },
+          { d: "<code>product</code> should equal 20.", t: "product == 20" },
+          { d: "<code>power</code> should equal 8.", t: "power == 8" },
+          { d: "<code>remainder</code> should equal 1.", t: "remainder == 1" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Strings",
+    lessons: [
+      {
+        title: "Creating Strings",
+        desc: "A string is a sequence of characters. You create one by wrapping text in single '...' or double \"...\" quotes.",
+        example: "greeting = 'Hello, Python!'\nempty = \"\"",
+        instructions: ["Create a variable named <code>greeting</code> equal to the string <code>'Hello, Python!'</code>."],
+        starter: "",
+        tests: [
+          { d: "<code>greeting</code> should equal 'Hello, Python!'.", t: "greeting == 'Hello, Python!'" }
+        ]
+      },
+      {
+        title: "String Concatenation",
+        desc: "You can join (concatenate) strings with the + operator. To add spaces, you must include them explicitly.",
+        example: "first = 'Guido'\nlast = 'van Rossum'\nfull = first + ' ' + last\nprint(full)",
+        instructions: ["Using the provided <code>first</code> and <code>last</code> variables, create <code>full_name</code> that joins them with a space in between."],
+        starter: "first = 'Guido'\nlast = 'van Rossum'\n# create full_name below:",
+        tests: [
+          { d: "<code>full_name</code> should equal 'Guido van Rossum'.", t: "full_name == 'Guido van Rossum'" }
+        ]
+      },
+      {
+        title: "String Methods",
+        desc: "Strings have built-in methods. .upper() and .lower() change case, .strip() removes whitespace, and len() returns the length.",
+        example: "text = 'Python'\ntext.upper()   # 'PYTHON'\ntext.lower()   # 'python'\nlen(text)      # 6",
+        instructions: ["Given <code>text = 'Python'</code>, create:", "<code>upper_text</code> = text in uppercase,", "<code>lower_text</code> = text in lowercase,", "<code>len_text</code> = the length of text."],
+        starter: "text = 'Python'\n# create the three variables below:",
+        tests: [
+          { d: "<code>upper_text</code> should equal 'PYTHON'.", t: "upper_text == 'PYTHON'" },
+          { d: "<code>lower_text</code> should equal 'python'.", t: "lower_text == 'python'" },
+          { d: "<code>len_text</code> should equal 6.", t: "len_text == 6" }
+        ]
+      },
+      {
+        title: "Indexing and Slicing",
+        desc: "You can access individual characters with [index] (0-based, negative counts from the end) and grab substrings with slices [start:stop].",
+        example: "word = 'Python'\nword[0]    # 'P'\nword[-1]   # 'n'\nword[0:3]  # 'Pyt'",
+        instructions: ["Given <code>word = 'Python'</code>, create:", "<code>first_char</code> = the first character,", "<code>last_char</code> = the last character,", "<code>slice_word</code> = the first 3 characters."],
+        starter: "word = 'Python'\n# create the three variables below:",
+        tests: [
+          { d: "<code>first_char</code> should equal 'P'.", t: "first_char == 'P'" },
+          { d: "<code>last_char</code> should equal 'n'.", t: "last_char == 'n'" },
+          { d: "<code>slice_word</code> should equal 'Pyt'.", t: "slice_word == 'Pyt'" }
+        ]
+      },
+      {
+        title: "f-strings",
+        desc: "An f-string lets you embed expressions inside a string. Prefix the string with f and put expressions in {curly braces}.",
+        example: "name = 'Alice'\nage = 30\nmsg = f'My name is {name} and I am {age}.'",
+        instructions: ["Using <code>name = 'Alice'</code> and <code>age = 30</code>, create <code>intro</code> as an f-string that reads exactly: <code>My name is Alice and I am 30 years old.</code>"],
+        starter: "name = 'Alice'\nage = 30\n# create intro as an f-string:",
+        tests: [
+          { d: "<code>intro</code> should equal the exact sentence.", t: "intro == 'My name is Alice and I am 30 years old.'" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Lists and Tuples",
+    lessons: [
+      {
+        title: "Creating Lists",
+        desc: "A list is an ordered, mutable collection. You create it with square brackets, separating items with commas. Lists can hold any type.",
+        example: "numbers = [1, 2, 3, 4, 5]\nmixed = [1, 'two', 3.0]",
+        instructions: ["Create a list named <code>numbers</code> containing the integers 1 through 5 in order."],
+        starter: "",
+        tests: [
+          { d: "<code>numbers</code> should equal [1, 2, 3, 4, 5].", t: "numbers == [1, 2, 3, 4, 5]" }
+        ]
+      },
+      {
+        title: "List Indexing",
+        desc: "Access list items by index, just like string characters. Index 0 is the first item; -1 is the last.",
+        example: "fruits = ['apple', 'banana', 'cherry']\nfruits[0]   # 'apple'\nfruits[-1]  # 'cherry'",
+        instructions: ["Given <code>fruits = ['apple', 'banana', 'cherry']</code>, create:", "<code>first_fruit</code> = the first item,", "<code>last_fruit</code> = the last item."],
+        starter: "fruits = ['apple', 'banana', 'cherry']\n# create the two variables below:",
+        tests: [
+          { d: "<code>first_fruit</code> should equal 'apple'.", t: "first_fruit == 'apple'" },
+          { d: "<code>last_fruit</code> should equal 'cherry'.", t: "last_fruit == 'cherry'" }
+        ]
+      },
+      {
+        title: "List Methods",
+        desc: "Lists have methods that modify them in place: .append() adds an item, .remove() removes one, .sort() sorts. len() returns the size.",
+        example: "nums = [1, 2, 3]\nnums.append(4)   # [1, 2, 3, 4]\nlen(nums)        # 4",
+        instructions: ["Given <code>numbers = [1, 2, 3]</code>:", "append the value <code>4</code> to it,", "then create <code>count</code> = the length of the list."],
+        starter: "numbers = [1, 2, 3]\n# append 4 and create count:",
+        tests: [
+          { d: "<code>numbers</code> should now equal [1, 2, 3, 4].", t: "numbers == [1, 2, 3, 4]" },
+          { d: "<code>count</code> should equal 4.", t: "count == 4" }
+        ]
+      },
+      {
+        title: "List Slicing",
+        desc: "Slicing a list works like slicing a string. [start:stop] returns a new list from start up to (but not including) stop.",
+        example: "nums = [10, 20, 30, 40, 50]\nnums[:3]   # [10, 20, 30]\nnums[-2:]  # [40, 50]",
+        instructions: ["Given <code>nums = [10, 20, 30, 40, 50]</code>, create:", "<code>first_three</code> = the first three items,", "<code>last_two</code> = the last two items."],
+        starter: "nums = [10, 20, 30, 40, 50]\n# create the two variables below:",
+        tests: [
+          { d: "<code>first_three</code> should equal [10, 20, 30].", t: "first_three == [10, 20, 30]" },
+          { d: "<code>last_two</code> should equal [40, 50].", t: "last_two == [40, 50]" }
+        ]
+      },
+      {
+        title: "Tuples",
+        desc: "A tuple is like a list but immutable (it cannot be changed after creation). You create it with parentheses.",
+        example: "point = (3, 4)\npoint[0]   # 3\npoint[0] = 9  # TypeError!",
+        instructions: ["Create a tuple <code>point</code> = (3, 4).", "Create <code>x</code> = the first element and <code>y</code> = the second."],
+        starter: "",
+        tests: [
+          { d: "<code>point</code> should equal (3, 4) and be a tuple.", t: "point == (3, 4) and isinstance(point, tuple)" },
+          { d: "<code>x</code> should equal 3.", t: "x == 3" },
+          { d: "<code>y</code> should equal 4.", t: "y == 4" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Dictionaries and Sets",
+    lessons: [
+      {
+        title: "Creating Dictionaries",
+        desc: "A dictionary stores key-value pairs. You create it with curly braces, separating keys and values with colons.",
+        example: "person = {'name': 'Alice', 'age': 30}\nperson['name']   # 'Alice'",
+        instructions: ["Create a dictionary named <code>person</code> with keys <code>'name'</code> (value 'Alice') and <code>'age'</code> (value 30)."],
+        starter: "",
+        tests: [
+          { d: "<code>person</code> should equal {'name': 'Alice', 'age': 30}.", t: "person == {'name': 'Alice', 'age': 30}" }
+        ]
+      },
+      {
+        title: "Dictionary Access",
+        desc: "Get a value with dict[key]. Use .get(key) to safely return None (or a default) if the key is missing instead of raising an error.",
+        example: "person = {'name': 'Bob', 'age': 25}\nperson['name']         # 'Bob'\nperson.get('email')    # None",
+        instructions: ["Given <code>person = {'name': 'Bob', 'age': 25}</code>, create:", "<code>name</code> = person['name'],", "<code>age</code> = person.get('age')."],
+        starter: "person = {'name': 'Bob', 'age': 25}\n# create name and age:",
+        tests: [
+          { d: "<code>name</code> should equal 'Bob'.", t: "name == 'Bob'" },
+          { d: "<code>age</code> should equal 25.", t: "age == 25" }
+        ]
+      },
+      {
+        title: "Dictionary Methods",
+        desc: ".keys(), .values(), and .items() return the keys, values, and pairs. You add a new key with dict[new_key] = value.",
+        example: "d = {'a': 1}\nd['b'] = 2\nlist(d.keys())   # ['a', 'b']",
+        instructions: ["Given <code>person = {'name': 'Carol'}</code>:", "add a new key <code>'age'</code> with value 28,", "then create <code>keys</code> = a list of the dictionary's keys."],
+        starter: "person = {'name': 'Carol'}\n# add 'age' and create keys:",
+        tests: [
+          { d: "<code>person</code> should equal {'name': 'Carol', 'age': 28}.", t: "person == {'name': 'Carol', 'age': 28}" },
+          { d: "<code>keys</code> should contain both 'name' and 'age'.", t: "set(keys) == {'name', 'age'}" }
+        ]
+      },
+      {
+        title: "Sets",
+        desc: "A set is an unordered collection of unique values. Duplicates are automatically removed. Create one with curly braces.",
+        example: "s = {1, 2, 2, 3}\n# s is {1, 2, 3}\nlen(s)   # 3",
+        instructions: ["Create <code>unique</code> = {1, 2, 3, 2, 1}.", "Then create <code>length</code> = the number of items in the set."],
+        starter: "unique = {1, 2, 3, 2, 1}\n# create length:",
+        tests: [
+          { d: "<code>unique</code> should equal {1, 2, 3}.", t: "unique == {1, 2, 3}" },
+          { d: "<code>length</code> should equal 3.", t: "length == 3" }
+        ]
+      },
+      {
+        title: "Set Operations",
+        desc: "Sets support math-like operations: | (union), & (intersection), - (difference), ^ (symmetric difference).",
+        example: "a = {1, 2, 3}\nb = {3, 4, 5}\na | b   # {1, 2, 3, 4, 5}\na & b   # {3}",
+        instructions: ["Given <code>a = {1, 2, 3}</code> and <code>b = {3, 4, 5}</code>, create:", "<code>union</code> = the union of a and b,", "<code>intersection</code> = the intersection of a and b."],
+        starter: "a = {1, 2, 3}\nb = {3, 4, 5}\n# create union and intersection:",
+        tests: [
+          { d: "<code>union</code> should equal {1, 2, 3, 4, 5}.", t: "union == {1, 2, 3, 4, 5}" },
+          { d: "<code>intersection</code> should equal {3}.", t: "intersection == {3}" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Control Flow",
+    lessons: [
+      {
+        title: "if Statements",
+        desc: "An if statement runs code only when a condition is True. Indentation (4 spaces) defines what belongs to the if block.",
+        example: "x = 10\nif x > 5:\n    print('big')",
+        instructions: ["Define a function <code>check_positive(n)</code> that returns the string <code>'positive'</code> if <code>n</code> is greater than 0."],
+        starter: "def check_positive(n):\n    ",
+        tests: [
+          { d: "<code>check_positive(5)</code> should return 'positive'.", t: "check_positive(5) == 'positive'" },
+          { d: "<code>check_positive(-1)</code> should return None.", t: "check_positive(-1) is None" }
+        ]
+      },
+      {
+        title: "else and elif",
+        desc: "else runs when the if condition is False. elif (else if) lets you check multiple conditions in sequence.",
+        example: "score = 85\nif score >= 90:\n    grade = 'A'\nelif score >= 80:\n    grade = 'B'\nelse:\n    grade = 'C'",
+        instructions: ["Define <code>grade(score)</code> that returns:", "'A' if score >= 90, 'B' if score >= 80, and 'C' otherwise."],
+        starter: "def grade(score):\n    ",
+        tests: [
+          { d: "<code>grade(95)</code> should return 'A'.", t: "grade(95) == 'A'" },
+          { d: "<code>grade(85)</code> should return 'B'.", t: "grade(85) == 'B'" },
+          { d: "<code>grade(50)</code> should return 'C'.", t: "grade(50) == 'C'" }
+        ]
+      },
+      {
+        title: "for Loops",
+        desc: "A for loop repeats a block of code for each item in a sequence (like a list or range).",
+        example: "total = 0\nfor n in [1, 2, 3, 4, 5]:\n    total += n\nprint(total)   # 15",
+        instructions: ["Using a for loop, sum the numbers [1, 2, 3, 4, 5] into a variable named <code>total</code>."],
+        starter: "total = 0\nfor n in [1, 2, 3, 4, 5]:\n    ",
+        tests: [
+          { d: "<code>total</code> should equal 15.", t: "total == 15" }
+        ]
+      },
+      {
+        title: "while Loops",
+        desc: "A while loop repeats as long as a condition stays True. Be careful to update the condition so the loop ends.",
+        example: "n = 3\nwhile n > 0:\n    print(n)\n    n -= 1",
+        instructions: ["Using a while loop, append the numbers from 5 down to 1 into a list named <code>countdown</code> (so it becomes [5, 4, 3, 2, 1])."],
+        starter: "countdown = []\nn = 5\nwhile n > 0:\n    ",
+        tests: [
+          { d: "<code>countdown</code> should equal [5, 4, 3, 2, 1].", t: "countdown == [5, 4, 3, 2, 1]" }
+        ]
+      },
+      {
+        title: "break and continue",
+        desc: "break exits a loop immediately. continue skips the rest of the current iteration and moves to the next one.",
+        example: "for n in range(1, 11):\n    if n % 2 != 0:\n        continue\n    print(n)   # even numbers only",
+        instructions: ["Using a for loop over range(1, 11) and <code>continue</code>, build a list <code>evens</code> of the even numbers from 1 to 10."],
+        starter: "evens = []\nfor n in range(1, 11):\n    ",
+        tests: [
+          { d: "<code>evens</code> should equal [2, 4, 6, 8, 10].", t: "evens == [2, 4, 6, 8, 10]" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Functions",
+    lessons: [
+      {
+        title: "Defining Functions",
+        desc: "A function is a reusable block of code. Define it with def, a name, parentheses for parameters, and a colon. The body is indented.",
+        example: "def greet(name):\n    return f'Hello, {name}!'\n\ngreet('Alice')   # 'Hello, Alice!'",
+        instructions: ["Define a function <code>greet(name)</code> that returns <code>f'Hello, {name}!'</code>."],
+        starter: "def greet(name):\n    ",
+        tests: [
+          { d: "<code>greet('Alice')</code> should return 'Hello, Alice!'.", t: "greet('Alice') == 'Hello, Alice!'" }
+        ]
+      },
+      {
+        title: "Parameters and Return",
+        desc: "Parameters are inputs to a function. The return statement sends a value back to the caller. Without return, a function returns None.",
+        example: "def add(a, b):\n    return a + b\n\nadd(2, 3)   # 5",
+        instructions: ["Define <code>add(a, b)</code> that returns the sum of <code>a</code> and <code>b</code>."],
+        starter: "def add(a, b):\n    ",
+        tests: [
+          { d: "<code>add(2, 3)</code> should return 5.", t: "add(2, 3) == 5" },
+          { d: "<code>add(-1, 1)</code> should return 0.", t: "add(-1, 1) == 0" }
+        ]
+      },
+      {
+        title: "Default Parameters",
+        desc: "You can give a parameter a default value. If the caller doesn't provide it, the default is used.",
+        example: "def power(base, exp=2):\n    return base ** exp\n\npower(3)      # 9\npower(2, 3)   # 8",
+        instructions: ["Define <code>power(base, exp=2)</code> that returns <code>base ** exp</code>."],
+        starter: "def power(base, exp=2):\n    ",
+        tests: [
+          { d: "<code>power(3)</code> should return 9.", t: "power(3) == 9" },
+          { d: "<code>power(2, 3)</code> should return 8.", t: "power(2, 3) == 8" }
+        ]
+      },
+      {
+        title: "Return Values",
+        desc: "A function can return any value, including booleans. Returning the result of a comparison is a clean way to write checks.",
+        example: "def is_even(n):\n    return n % 2 == 0\n\nis_even(4)   # True",
+        instructions: ["Define <code>is_even(n)</code> that returns <code>True</code> if n is even, otherwise <code>False</code>."],
+        starter: "def is_even(n):\n    ",
+        tests: [
+          { d: "<code>is_even(4)</code> should return True.", t: "is_even(4) == True" },
+          { d: "<code>is_even(5)</code> should return False.", t: "is_even(5) == False" }
+        ]
+      },
+      {
+        title: "Lambda Functions",
+        desc: "A lambda is a small anonymous function on a single line. Useful for short operations you pass to other functions.",
+        example: "square = lambda x: x * x\nsquare(5)   # 25",
+        instructions: ["Create a lambda named <code>square</code> that returns <code>x * x</code>."],
+        starter: "square = ",
+        tests: [
+          { d: "<code>square(5)</code> should return 25.", t: "square(5) == 25" },
+          { d: "<code>square</code> should be callable.", t: "callable(square)" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Error Handling",
+    lessons: [
+      {
+        title: "try and except",
+        desc: "Wrap risky code in try. If an exception occurs, the except block runs instead of crashing your program.",
+        example: "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    result = 'Error'",
+        instructions: ["Define <code>safe_divide(a, b)</code> that returns <code>a / b</code>, but returns the string <code>'Error'</code> if a ZeroDivisionError occurs."],
+        starter: "def safe_divide(a, b):\n    ",
+        tests: [
+          { d: "<code>safe_divide(10, 2)</code> should return 5.", t: "safe_divide(10, 2) == 5" },
+          { d: "<code>safe_divide(1, 0)</code> should return 'Error'.", t: "safe_divide(1, 0) == 'Error'" }
+        ]
+      },
+      {
+        title: "Multiple Exceptions",
+        desc: "You can catch different exception types with separate except clauses, reacting to each differently.",
+        example: "try:\n    val = int('abc')\nexcept ValueError:\n    val = 'bad value'",
+        instructions: ["Define <code>parse_int(s)</code> that returns <code>int(s)</code>. On ValueError return <code>'ValueError'</code>; on TypeError return <code>'TypeError'</code>."],
+        starter: "def parse_int(s):\n    ",
+        tests: [
+          { d: "<code>parse_int('5')</code> should return 5.", t: "parse_int('5') == 5" },
+          { d: "<code>parse_int('abc')</code> should return 'ValueError'.", t: "parse_int('abc') == 'ValueError'" }
+        ]
+      },
+      {
+        title: "Safe Access",
+        desc: "Use try/except to safely handle missing keys or out-of-range indexes without crashing.",
+        example: "def safe_get(lst, i):\n    try:\n        return lst[i]\n    except IndexError:\n        return 'IndexError'",
+        instructions: ["Define <code>safe_get(lst, i)</code> that returns <code>lst[i]</code>, or <code>'IndexError'</code> if the index is out of range."],
+        starter: "def safe_get(lst, i):\n    ",
+        tests: [
+          { d: "<code>safe_get([1, 2, 3], 1)</code> should return 2.", t: "safe_get([1, 2, 3], 1) == 2" },
+          { d: "<code>safe_get([1, 2, 3], 10)</code> should return 'IndexError'.", t: "safe_get([1, 2, 3], 10) == 'IndexError'" }
+        ]
+      },
+      {
+        title: "Raising Exceptions",
+        desc: "Use raise to signal an error yourself. This lets other code catch it with try/except. The raises() helper checks this in tests.",
+        example: "def set_age(age):\n    if age < 0:\n        raise ValueError('negative age')\n    return age",
+        instructions: ["Define <code>set_age(age)</code> that raises <code>ValueError</code> if age < 0, otherwise returns age."],
+        starter: "def set_age(age):\n    ",
+        tests: [
+          { d: "<code>set_age(25)</code> should return 25.", t: "set_age(25) == 25" },
+          { d: "<code>set_age(-1)</code> should raise ValueError.", t: "raises(ValueError, set_age, -1)" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Object-Oriented Programming",
+    lessons: [
+      {
+        title: "Classes and Objects",
+        desc: "A class is a blueprint. You create an object (instance) by calling the class like a function. Methods are functions defined inside the class.",
+        example: "class Dog:\n    def bark(self):\n        return 'Woof!'\n\nmy_dog = Dog()\nmy_dog.bark()   # 'Woof!'",
+        instructions: ["Define a class <code>Dog</code> with a method <code>bark(self)</code> that returns <code>'Woof!'</code>.", "Then create an instance named <code>my_dog</code>."],
+        starter: "class Dog:\n    ",
+        tests: [
+          { d: "<code>Dog</code> should have a <code>bark</code> method.", t: "hasattr(Dog, 'bark')" },
+          { d: "<code>my_dog.bark()</code> should return 'Woof!'.", t: "my_dog.bark() == 'Woof!'" }
+        ]
+      },
+      {
+        title: "The __init__ Constructor",
+        desc: "__init__ is a special method called when you create an instance. Use it to set up the object's attributes via self.",
+        example: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        return f'Hi, I am {self.name}'\n\np = Person('Alice')",
+        instructions: ["Define <code>Person</code> with <code>__init__(self, name)</code> that sets <code>self.name</code>, and a method <code>greet(self)</code> returning <code>f'Hi, I am {self.name}'</code>.", "Create <code>p = Person('Alice')</code>."],
+        starter: "class Person:\n    ",
+        tests: [
+          { d: "<code>p.name</code> should equal 'Alice'.", t: "p.name == 'Alice'" },
+          { d: "<code>p.greet()</code> should return 'Hi, I am Alice'.", t: "p.greet() == 'Hi, I am Alice'" }
+        ]
+      },
+      {
+        title: "Inheritance",
+        desc: "A class can inherit from another to reuse and override its behavior. Put the parent class in parentheses.",
+        example: "class Animal:\n    def speak(self):\n        return '...'\n\nclass Cat(Animal):\n    def speak(self):\n        return 'Meow'",
+        instructions: ["The class <code>Animal</code> is provided. Define <code>Cat(Animal)</code> that overrides <code>speak(self)</code> to return <code>'Meow'</code>.", "Create <code>c = Cat()</code>."],
+        starter: "class Animal:\n    def speak(self):\n        return '...'\n\nclass Cat(Animal):\n    ",
+        tests: [
+          { d: "<code>c.speak()</code> should return 'Meow'.", t: "c.speak() == 'Meow'" },
+          { d: "<code>Cat</code> should be a subclass of <code>Animal</code>.", t: "issubclass(Cat, Animal)" }
+        ]
+      },
+      {
+        title: "Encapsulation",
+        desc: "A class bundles data and the methods that act on it. Keep internal state private and expose behavior through methods.",
+        example: "class BankAccount:\n    def __init__(self, balance=0):\n        self.balance = balance\n    def deposit(self, amount):\n        self.balance += amount\n\nacc = BankAccount(100)\nacc.deposit(50)",
+        instructions: ["Define <code>BankAccount</code> with <code>__init__(self, balance=0)</code> setting <code>self.balance</code>, and <code>deposit(self, amount)</code> that adds amount to balance.", "Then create <code>acc = BankAccount(100)</code> and call <code>acc.deposit(50)</code>."],
+        starter: "class BankAccount:\n    ",
+        tests: [
+          { d: "<code>acc.balance</code> should equal 150.", t: "acc.balance == 150" },
+          { d: "<code>acc</code> should have a <code>deposit</code> method.", t: "hasattr(acc, 'deposit')" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Advanced Python",
+    lessons: [
+      {
+        title: "List Comprehensions",
+        desc: "A list comprehension builds a list in one line. Syntax: [expression for item in iterable].",
+        example: "squares = [x*x for x in range(1, 6)]\n# [1, 4, 9, 16, 25]",
+        instructions: ["Using a list comprehension, create <code>squares</code> containing the squares of 1 through 5."],
+        starter: "squares = ",
+        tests: [
+          { d: "<code>squares</code> should equal [1, 4, 9, 16, 25].", t: "squares == [1, 4, 9, 16, 25]" }
+        ]
+      },
+      {
+        title: "map and filter",
+        desc: "map(fn, iterable) applies a function to every item. filter(fn, iterable) keeps items where fn returns True. Wrap them in list() to get a list.",
+        example: "nums = [1, 2, 3, 4]\ndoubled = list(map(lambda x: x*2, nums))\nevens = list(filter(lambda x: x%2==0, nums))",
+        instructions: ["Given <code>nums = [1, 2, 3, 4]</code>, create:", "<code>doubled</code> = each number times 2 (use map),", "<code>evens</code> = only the even numbers (use filter)."],
+        starter: "nums = [1, 2, 3, 4]\n# create doubled and evens:",
+        tests: [
+          { d: "<code>doubled</code> should equal [2, 4, 6, 8].", t: "doubled == [2, 4, 6, 8]" },
+          { d: "<code>evens</code> should equal [2, 4].", t: "evens == [2, 4]" }
+        ]
+      },
+      {
+        title: "Generators",
+        desc: "A generator yields values one at a time using yield, instead of building the whole list at once. Great for large or infinite sequences.",
+        example: "def count_up_to(n):\n    i = 1\n    while i <= n:\n        yield i\n        i += 1\n\nlist(count_up_to(3))   # [1, 2, 3]",
+        instructions: ["Define a generator <code>count_up_to(n)</code> that yields the numbers 1 through n.", "Then create <code>gen = count_up_to(3)</code> and <code>result = list(gen)</code>."],
+        starter: "def count_up_to(n):\n    ",
+        tests: [
+          { d: "<code>result</code> should equal [1, 2, 3].", t: "result == [1, 2, 3]" },
+          { d: "<code>count_up_to(3)</code> should be a generator.", t: "hasattr(count_up_to(3), '__next__')" }
+        ]
+      },
+      {
+        title: "Decorators",
+        desc: "A decorator is a function that wraps another function to extend its behavior. It takes a function and returns a new one.",
+        example: "def shout(func):\n    def wrapper():\n        return func().upper()\n    return wrapper\n\ngreet = shout(greet)",
+        instructions: ["Define a decorator <code>shout(func)</code> that returns a wrapper returning <code>func().upper()</code>.", "Then apply it: define <code>greet</code> returning 'hello', and reassign <code>greet = shout(greet)</code>."],
+        starter: "def shout(func):\n    ",
+        tests: [
+          { d: "<code>greet()</code> should return 'HELLO'.", t: "greet() == 'HELLO'" }
+        ]
+      },
+      {
+        title: "File Handling",
+        desc: "Use open() with a context manager (with) to read and write files safely. 'w' writes, 'r' reads. The file is closed automatically.",
+        example: "with open('data.txt', 'w') as f:\n    f.write('Hello')\n\nwith open('data.txt') as f:\n    content = f.read()\n# 'Hello'",
+        instructions: ["Write the string <code>'Hello'</code> to a file named <code>data.txt</code>.", "Then read it back into a variable named <code>content</code>."],
+        starter: "",
+        tests: [
+          { d: "<code>content</code> should equal 'Hello'.", t: "content == 'Hello'" }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Final Projects",
+    lessons: [
+      {
+        title: "Build a Calculator",
+        desc: "Put it all together. Build a calculator function that handles several operators and edge cases gracefully.",
+        example: "calculator(2, '+', 3)   # 5\ncalculator(5, '/', 0)   # 'Error'",
+        instructions: ["Define <code>calculator(a, op, b)</code> that supports '+', '-', '*', '/'.", "Return the numeric result, <code>'Error'</code> on division by zero, and <code>'Invalid operator'</code> for unknown operators."],
+        starter: "def calculator(a, op, b):\n    ",
+        tests: [
+          { d: "<code>calculator(2, '+', 3)</code> returns 5.", t: "calculator(2, '+', 3) == 5" },
+          { d: "<code>calculator(10, '-', 4)</code> returns 6.", t: "calculator(10, '-', 4) == 6" },
+          { d: "<code>calculator(3, '*', 4)</code> returns 12.", t: "calculator(3, '*', 4) == 12" },
+          { d: "<code>calculator(8, '/', 2)</code> returns 4.", t: "calculator(8, '/', 2) == 4" },
+          { d: "<code>calculator(5, '/', 0)</code> returns 'Error'.", t: "calculator(5, '/', 0) == 'Error'" },
+          { d: "<code>calculator(1, '%', 2)</code> returns 'Invalid operator'.", t: "calculator(1, '%', 2) == 'Invalid operator'" }
+        ]
+      },
+      {
+        title: "Number Guessing Game",
+        desc: "Write the core logic of a guessing game: compare a guess to a target and give feedback.",
+        example: "check_guess(3, 5)   # 'Too low'\ncheck_guess(5, 5)   # 'Correct!'",
+        instructions: ["Define <code>check_guess(guess, target)</code> that returns:", "'Too low' if guess < target, 'Too high' if guess > target, and 'Correct!' if they are equal."],
+        starter: "def check_guess(guess, target):\n    ",
+        tests: [
+          { d: "<code>check_guess(3, 5)</code> returns 'Too low'.", t: "check_guess(3, 5) == 'Too low'" },
+          { d: "<code>check_guess(7, 5)</code> returns 'Too high'.", t: "check_guess(7, 5) == 'Too high'" },
+          { d: "<code>check_guess(5, 5)</code> returns 'Correct!'.", t: "check_guess(5, 5) == 'Correct!'" }
+        ]
+      },
+      {
+        title: "Palindrome Checker",
+        desc: "A palindrome reads the same forwards and backwards. Ignore case and spaces when checking.",
+        example: "is_palindrome('Racecar')   # True\nis_palindrome('hello')     # False",
+        instructions: ["Define <code>is_palindrome(s)</code> that returns True if s is a palindrome, ignoring case and spaces."],
+        starter: "def is_palindrome(s):\n    ",
+        tests: [
+          { d: "<code>is_palindrome('racecar')</code> returns True.", t: "is_palindrome('racecar') == True" },
+          { d: "<code>is_palindrome('hello')</code> returns False.", t: "is_palindrome('hello') == False" },
+          { d: "<code>is_palindrome('A man a plan a canal Panama')</code> returns True.", t: "is_palindrome('A man a plan a canal Panama') == True" }
+        ]
+      },
+      {
+        title: "Word Frequency Counter",
+        desc: "Count how often each word appears in a text. Store the counts in a dictionary.",
+        example: "word_freq('the cat the dog')\n# {'the': 2, 'cat': 1, 'dog': 1}",
+        instructions: ["Define <code>word_freq(text)</code> that splits text on spaces (lowercased) and returns a dict of word counts."],
+        starter: "def word_freq(text):\n    ",
+        tests: [
+          { d: "<code>word_freq('the cat the dog')</code> returns the correct dict.", t: "word_freq('the cat the dog') == {'the': 2, 'cat': 1, 'dog': 1}" },
+          { d: "<code>word_freq('hello hello')</code> returns {'hello': 2}.", t: "word_freq('hello hello') == {'hello': 2}" }
+        ]
+      },
+      {
+        title: "FizzBuzz",
+        desc: "The classic interview question. For numbers 1 to n, return 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, 'FizzBuzz' for both, and the number as a string otherwise.",
+        example: "fizzbuzz(5)\n# ['1', '2', 'Fizz', '4', 'Buzz']",
+        instructions: ["Define <code>fizzbuzz(n)</code> that returns a list of strings for the numbers 1 through n following the FizzBuzz rules."],
+        starter: "def fizzbuzz(n):\n    ",
+        tests: [
+          { d: "<code>fizzbuzz(5)</code> returns ['1','2','Fizz','4','Buzz'].", t: "fizzbuzz(5) == ['1', '2', 'Fizz', '4', 'Buzz']" },
+          { d: "<code>fizzbuzz(15)[-1]</code> returns 'FizzBuzz'.", t: "fizzbuzz(15)[-1] == 'FizzBuzz'" }
+        ]
+      }
+    ]
+  }
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let pyodide = null;
+let curMod = 0;
+let curLes = 0;
+const completed = new Set(JSON.parse(localStorage.getItem('fpc_completed') || '[]'));
+const savedCode = JSON.parse(localStorage.getItem('fpc_code') || '{}');
+const expanded = new Set(JSON.parse(localStorage.getItem('fpc_expanded') || '[0,1,2,3,4]'));
+
+const editor = document.getElementById('editor');
+const lineNumbers = document.getElementById('lineNumbers');
+const consoleOutput = document.getElementById('consoleOutput');
+const testsList = document.getElementById('testsList');
+const testSummary = document.getElementById('testSummary');
+const descriptionPanel = document.getElementById('descriptionPanel');
+const runBtn = document.getElementById('runBtn');
+const checkBtn = document.getElementById('checkBtn');
+const resetBtn = document.getElementById('resetBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function totalLessons() {
+  return curriculum.reduce((s, m) => s + m.lessons.length, 0);
+}
+function lessonId(m, l) { return `${m}-${l}`; }
+function currentLesson() { return curriculum[curMod].lessons[curLes]; }
+
+/* =========================================================
+   PYODIDE INIT
+   ========================================================= */
+async function initPyodide() {
+  pyodide = await loadPyodide();
+  // Install the helper that runs user code + tests in isolation and returns JSON.
+  pyodide.runPython(`
+import sys, io, json, traceback
+
+def raises(exc_type, fn, *args, **kwargs):
+    try:
+        fn(*args, **kwargs)
+        return False
+    except exc_type:
+        return True
+    except Exception:
+        return False
+
+def run_session(user_code, test_codes):
+    out = io.StringIO()
+    old_out, old_err = sys.stdout, sys.stderr
+    sys.stdout = out
+    sys.stderr = out
+    ns = {'__name__': '__main__', 'raises': raises}
+    error = None
+    try:
+        exec(user_code, ns)
+    except Exception:
+        error = traceback.format_exc()
+    sys.stdout, sys.stderr = old_out, old_err
+    captured = out.getvalue()
+    ns['__out__'] = captured
+    results = []
+    if error is None:
+        for tc in test_codes:
+            try:
+                results.append(bool(eval(tc, ns)))
+            except Exception:
+                results.append(False)
+    else:
+        results = [False] * len(test_codes)
+    return json.dumps({'stdout': captured, 'error': error, 'results': results})
+  `);
+  document.getElementById('loader').classList.remove('show');
+}
+
+/* =========================================================
+   RENDERING
+   ========================================================= */
+function renderSidebar() {
+  const el = document.getElementById('curriculum');
+  el.innerHTML = curriculum.map((mod, mi) => {
+    const open = expanded.has(mi) ? 'open' : '';
+    const lessonsHtml = mod.lessons.map((les, li) => {
+      const id = lessonId(mi, li);
+      const done = completed.has(id);
+      const active = mi === curMod && li === curLes ? 'active' : '';
+      return `<li class="lesson-item ${active} ${done?'done':''}" onclick="selectLesson(${mi},${li})">
+        <span class="lesson-check">${done?'&#10003;':''}</span>
+        <span class="lesson-name">${mi+1}.${li+1} ${les.title}</span>
+      </li>`;
+    }).join('');
+    return `<div class="module ${open}">
+      <button class="module-header" onclick="toggleModule(${mi})">
+        <span class="module-title">${mi+1}. ${mod.title}</span>
+        <span class="chevron">&#9660;</span>
+      </button>
+      <ul class="lessons">${lessonsHtml}</ul>
+    </div>`;
+  }).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = totalLessons();
+  const done = completed.size;
+  const pct = total ? (done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} of ${total} lessons completed`;
+}
+
+function renderLesson() {
+  const les = currentLesson();
+  const done = completed.has(lessonId(curMod, curLes));
+  descriptionPanel.innerHTML = `
+    <div class="crumb">Module ${curMod+1} &middot; Lesson ${curLes+1} ${done ? '<span class="badge-done">Completed</span>' : ''}</div>
+    <h1 class="lesson-title">${les.title}</h1>
+    <p class="lesson-desc">${les.desc}</p>
+    <div class="panel-h">Example</div>
+    <pre class="example-code">${escapeHtml(les.example || '')}</pre>
+    <div class="panel-h">Instructions</div>
+    <ol class="instructions">${les.instructions.map(i => `<li>${i}</li>`).join('')}</ol>
+    <div class="desc-nav">
+      <button onclick="prevLesson()" ${curMod===0&&curLes===0?'disabled':''}>&larr; Previous</button>
+      <button onclick="nextLesson()" ${isLast()?'disabled':''}>Next &rarr;</button>
+    </div>
+  `;
+  // Load saved or starter code
+  const id = lessonId(curMod, curLes);
+  editor.value = savedCode[id] !== undefined ? savedCode[id] : (les.starter || '');
+  updateLineNumbers();
+  consoleOutput.textContent = 'Run your code to see output here.';
+  consoleOutput.className = 'console-output muted';
+  renderTestsIdle();
+  nextBtn.classList.remove('show');
+  if (done) nextBtn.classList.add('show');
+  // close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+function renderTestsIdle() {
+  const les = currentLesson();
+  testsList.innerHTML = les.tests.map(t =>
+    `<li><span class="test-icon idle"></span><span>${t.d}</span></li>`
+  ).join('');
+  testSummary.textContent = '';
+}
+
+function renderTests(results) {
+  const les = currentLesson();
+  const passed = results.filter(Boolean).length;
+  testsList.innerHTML = les.tests.map((t, i) => {
+    const ok = results[i];
+    return `<li><span class="test-icon ${ok?'pass':'fail'}">${ok?'&#10003;':'&#10007;'}</span><span>${t.d}</span></li>`;
+  }).join('');
+  testSummary.textContent = `${passed} / ${les.tests.length} passed`;
+}
+
+function updateLineNumbers() {
+  const lines = editor.value.split('\n').length;
+  let s = '';
+  for (let i = 1; i <= lines; i++) s += i + '\n';
+  lineNumbers.textContent = s;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+function toggleModule(mi) {
+  if (expanded.has(mi)) expanded.delete(mi); else expanded.add(mi);
+  localStorage.setItem('fpc_expanded', JSON.stringify([...expanded]));
+  renderSidebar();
+}
+
+function selectLesson(m, l) {
+  curMod = m; curLes = l;
+  localStorage.setItem('fpc_pos', JSON.stringify([m, l]));
+  document.getElementById('successModal').classList.remove('show');
+  renderSidebar();
+  renderLesson();
+}
+
+function isLast() {
+  return curMod === curriculum.length - 1 && curLes === curriculum[curMod].lessons.length - 1;
+}
+
+function nextLesson() {
+  if (isLast()) return;
+  document.getElementById('successModal').classList.remove('show');
+  if (curLes < curriculum[curMod].lessons.length - 1) {
+    curLes++;
+  } else {
+    curMod++;
+    curLes = 0;
+    expanded.add(curMod);
+    localStorage.setItem('fpc_expanded', JSON.stringify([...expanded]));
+  }
+  localStorage.setItem('fpc_pos', JSON.stringify([curMod, curLes]));
+  renderSidebar();
+  renderLesson();
+  document.querySelector('.editor-panel').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function prevLesson() {
+  if (curMod === 0 && curLes === 0) return;
+  document.getElementById('successModal').classList.remove('show');
+  if (curLes > 0) {
+    curLes--;
+  } else {
+    curMod--;
+    curLes = curriculum[curMod].lessons.length - 1;
+  }
+  localStorage.setItem('fpc_pos', JSON.stringify([curMod, curLes]));
+  renderSidebar();
+  renderLesson();
+}
+
+/* =========================================================
+   RUN / CHECK
+   ========================================================= */
+async function runCode(check = false) {
+  if (!pyodide) {
+    consoleOutput.textContent = 'Python is still loading, please wait...';
+    consoleOutput.className = 'console-output error';
+    return;
+  }
+  const code = editor.value;
+  savedCode[lessonId(curMod, curLes)] = code;
+  localStorage.setItem('fpc_code', JSON.stringify(savedCode));
+
+  const les = currentLesson();
+  const testCodes = check ? les.tests.map(t => t.t) : [];
+  checkBtn.disabled = true;
+  checkBtn.innerHTML = '&#10003; Checking...';
+
+  try {
+    const jsonStr = pyodide.globals.get('run_session')(code, testCodes);
+    const res = JSON.parse(jsonStr);
+
+    // Console output
+    if (res.error) {
+      consoleOutput.textContent = res.error;
+      consoleOutput.className = 'console-output error';
+    } else if (res.stdout.trim()) {
+      consoleOutput.textContent = res.stdout;
+      consoleOutput.className = 'console-output';
+    } else {
+      consoleOutput.textContent = check ? '(no output)' : '(no output — try using print())';
+      consoleOutput.className = 'console-output muted';
+    }
+
+    if (check) {
+      renderTests(res.results);
+      const allPass = res.results.length > 0 && res.results.every(Boolean);
+      if (allPass) {
+        const id = lessonId(curMod, curLes);
+        const wasDone = completed.has(id);
+        completed.add(id);
+        localStorage.setItem('fpc_completed', JSON.stringify([...completed]));
+        renderSidebar();
+        nextBtn.classList.add('show');
+        if (!wasDone) showSuccess();
+      } else {
+        nextBtn.classList.remove('show');
+      }
+    }
+  } catch (e) {
+    consoleOutput.textContent = 'Error running code: ' + e.message;
+    consoleOutput.className = 'console-output error';
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.innerHTML = '&#10003; Check';
+  }
+}
+
+function showSuccess() {
+  const modal = document.getElementById('successModal');
+  const isLastLesson = isLast();
+  document.getElementById('successText').textContent = isLastLesson
+    ? 'Amazing! You finished the entire Python course. You are officially a Python programmer!'
+    : 'Great work! You passed all the tests. Keep going!';
+  document.getElementById('modalNext').textContent = isLastLesson ? 'Finish' : 'Continue to next lesson \u2192';
+  modal.classList.add('show');
+}
+
+/* =========================================================
+   WIRING
+   ========================================================= */
+editor.addEventListener('input', () => {
+  updateLineNumbers();
+  savedCode[lessonId(curMod, curLes)] = editor.value;
+  localStorage.setItem('fpc_code', JSON.stringify(savedCode));
+});
+editor.addEventListener('scroll', () => { lineNumbers.scrollTop = editor.scrollTop; });
+editor.addEventListener('keydown', (e) => {
+  // Tab inserts 4 spaces
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const start = editor.selectionStart, end = editor.selectionEnd;
+    editor.value = editor.value.slice(0, start) + '    ' + editor.value.slice(end);
+    editor.selectionStart = editor.selectionEnd = start + 4;
+    updateLineNumbers();
+  }
+  // Ctrl+Enter run, Ctrl+Shift+Enter check
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runCode(e.shiftKey);
+  }
+});
+
+runBtn.addEventListener('click', () => runCode(false));
+checkBtn.addEventListener('click', () => runCode(true));
+resetBtn.addEventListener('click', () => {
+  if (confirm('Reset your code to the starter template for this lesson?')) {
+    editor.value = currentLesson().starter || '';
+    updateLineNumbers();
+    savedCode[lessonId(curMod, curLes)] = editor.value;
+    localStorage.setItem('fpc_code', JSON.stringify(savedCode));
+  }
+});
+nextBtn.addEventListener('click', nextLesson);
+document.getElementById('modalNext').addEventListener('click', () => {
+  document.getElementById('successModal').classList.remove('show');
+  if (!isLast()) nextLesson();
+});
+
+// Mobile sidebar
+document.getElementById('menuBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('backdrop').classList.toggle('show');
+});
+document.getElementById('backdrop').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+});
+
+// Restore position
+const savedPos = JSON.parse(localStorage.getItem('fpc_pos') || '[0,0]');
+curMod = Math.min(savedPos[0] || 0, curriculum.length - 1);
+curLes = Math.min(savedPos[1] || 0, curriculum[curMod].lessons.length - 1);
+
+renderSidebar();
+renderLesson();
+initPyodide().catch(err => {
+  document.getElementById('loader').classList.remove('show');
+  consoleOutput.textContent = 'Failed to load the Python runtime: ' + err.message + '\n\nPlease check your internet connection and refresh.';
+  consoleOutput.className = 'console-output error';
+});
+</script>
+</body>
+</html>
